@@ -36,7 +36,7 @@ window.addEventListener('DOMContentLoaded', function () { // после прог
 
     // timer
 
-    let deadLine = '2020-02-05'; // дата конца
+    let deadLine = '2020-02-07'; // дата конца
 
     function getTimeRemaining(endTime) { // функция вычисления от текущей даты до конечной в миллисекундах
         let t = Date.parse(endTime) - Date.parse(new Date()), // переменная t, содержащая количество миллисекунд до конца
@@ -142,7 +142,7 @@ window.addEventListener('DOMContentLoaded', function () { // после прог
     let message = {
         loading: 'Загрузка...',
         success: 'Сасибо! Скоро мы с вами свяжемся!',
-        failure: 'Что-то пошло не так...'
+        failure: 'Что-то пошло не так... (Возможно сервер выключен)'
     };
 
     let form = document.querySelector('.main-form'),
