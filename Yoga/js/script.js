@@ -36,7 +36,7 @@ window.addEventListener('DOMContentLoaded', function () { // после прог
 
     // timer
 
-    let deadLine = '2020-02-07'; // дата конца
+    let deadLine = '2020-02-08'; // дата конца
 
     function getTimeRemaining(endTime) { // функция вычисления от текущей даты до конечной в миллисекундах
         let t = Date.parse(endTime) - Date.parse(new Date()), // переменная t, содержащая количество миллисекунд до конца
@@ -70,17 +70,17 @@ window.addEventListener('DOMContentLoaded', function () { // после прог
 
         function updateClock() { // запись новых данных
             let t = getTimeRemaining(endTime); // запись в переменную t объект из функции
-            if (t.hours > 10) {
+            if (t.hours > 9) {
                 hours.textContent = t.hours; // запись контента в блок html содержимое объекта t с hours
             } else {
                 hours.textContent = "0" + t.hours;
             }
-            if (t.minutes > 10) {
+            if (t.minutes > 9) {
                 minutes.textContent = t.minutes; // минуты
             } else {
                 minutes.textContent = "0" + t.minutes;
             }
-            if (t.seconds > 10) {
+            if (t.seconds > 9) {
                 seconds.textContent = t.seconds; // секунды
             } else {
                 seconds.textContent = "0" + t.seconds;
