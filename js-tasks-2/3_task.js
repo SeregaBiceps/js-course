@@ -172,19 +172,56 @@ const users = [
 // Количество пользователей может быть любым.
 // Таблица и все ее содержимое должно создаваться через js, в разметке у вас может быть только контейнер какой то.
 // В коде у вас должна быть переменная которая будет содержать в виде объекта список полей и заголовков th которые будут выводиться в таблице. Что то типа { name: ‘Name’, email: ‘Email’... } соответственно ключ объекта это ваше поле которое вы хотите вывести из объекта пользователя а значение это заголовок th.
-const table = document.createElement("table");
-const tr = document.createElement("tr");
-// Заголовки
-const tr1 = ["#", "Name", "Email", "Balance"];
-for (i = 0; i < Object.keys(tr1).length; i++) {
-  const th = document.createElement("th");
-  th.textContent = tr1[i];
-  tr.appendChild(th); //я дебил кста (напоминалочка)
+let trs = ``;
+let total = 0;
+for (let i = 0; i < users.length; i++) {
+  trs += `
+  <tr>
+    <td>${i + 1}</td>
+    <td>${users[i].name}</td>
+    <td>${users[i].email}</td>
+    <td>${users[i].balance}</td>
+  </tr>`;
+  total += Number(users[i].balance);
 }
-//
-for (i = 0; i < users.length; i++) {
-  const tr = document.createElement('tr');
-  for ()
-}
-table.appendChild(tr);
-body.appendChild(table);
+body.insertAdjacentHTML(
+  "beforeend",
+  `
+<table style="border: 2px solid black;">
+  <thead>
+    <tr">
+      <th>#</th>
+      <th>Name</th>
+      <th>Email</th>
+      <th>Balance</th>
+    </tr">
+  </thead>
+  <tbody>
+    ${trs}
+  </tbody>
+  <tfoot style="text-align: right;">
+    <tr>
+      <td colspan="4">Total balance: <strong>${total}</strong></td>
+    </tr>
+  </tfoot>
+</table>`
+);
+const table = document.querySelector("table");
+table.style = `
+width: 60%;
+margin: 0 auto;
+text-align: left;
+border-collapse: collapse;
+font-family: sans-serif;`;
+const tr = table.querySelectorAll("tr");
+tr.forEach(el => {
+  el.style = `
+border-collapse: collapse;
+border-top: 1px solid rgba(0, 0, 0, .3);
+border-bottom: 1px solid rgba(0, 0, 0, .3);
+line-height: 40px;`;
+});
+tr[0].style.borderBottom = `2px solid rgba(0, 0, 0, .3`;
+tr[0].style.borderTop = `2px solid rgba(0, 0, 0, .3`;
+tr[tr.length - 1].style.border = `none`;
+tr[tr.length - 2].style.borderBottom = `1px solid rgba(0, 0, 0, .2)`;
