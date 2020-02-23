@@ -134,11 +134,19 @@ addForm.addEventListener("submit", el => {
     }
     formData[formInputs[input].name] = `${formInputs[input].value}`;
   });
-  JSON.stringify(formData);
   const xhr = new XMLHttpRequest();
-  xhr.open("POST", "https://jsonplaceholder.typicode.com/users");
-  xhr.send(formData);
+  xhr.open("POST", "https://jsonplaceholder.typicode.com/posts");
   xhr.addEventListener("load", () => {
-    console.log(xhr.response);
+    const response = JSON.parse(xhr.responseText);
+    const fragment = document.createDocumentFragment();
+    const wrapper = document.querySelector("div");
+    createName(response, wrapper);
+    fragment.appendChild(wrapper);
+    document.body.appendChild(fragment);
   });
+  xhr.setRequestHeader("Content-type", "application/json; charset=UTF-8");
+  xhr.send(JSON.stringify(formData));
+  el.target.reset();
+  el.target.classList.remove("active");
+  document.body.removeChild(el.target);
 });
