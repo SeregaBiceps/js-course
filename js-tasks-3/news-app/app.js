@@ -93,6 +93,17 @@ const newsService = (function() {
   };
 })();
 
+// Elements
+const form = document.forms["newsControls"]; // Запись в переменные формы и ее инпутов
+const countrySelect = form.elements["country"];
+const searchInput = form.elements["search"];
+
+form.addEventListener("submit", e => {
+  // При сабмите формы
+  e.preventDefault(); // Не обновлять страницу браузера
+  loadNews(); // Вызвать функцию загрузки новостей
+});
+
 //  init selects
 document.addEventListener("DOMContentLoaded", function() {
   // Обработчик события на загрузку всех элементов страницы
@@ -103,20 +114,70 @@ document.addEventListener("DOMContentLoaded", function() {
 // Load news function
 function loadNews() {
   // Функция загрузки новостей, без аргументов
+  showLoader(); // Вызов функции отображения load bar
+  const country = countrySelect.value; // Заключение в переменные полученных инпутов
+  const searchText = searchInput.value;
+
+  if (!searchText) {
+    // Если пользователь не заполнил окно поиска
+    newsService.topHeadlines(country, onGetResponse); // Вызвать функцию сортировки по стране
+  } else {
+    // Иначе
+    setTimeout(function() {
+      // Вызвать функцию с задержкой 0,2 сек
+      newsService.everything(searchText, onGetResponse); // Которая вызовет функцию сортировки по стране и заполненному окну поиска
+    }, 200);
+  }
   newsService.topHeadlines("ua", onGetResponse); // Получение запросов сортированному по стране и передача в качетсве cb функции onGetResponse
 }
 
 // Function on get response on server
 function onGetResponse(err, res) {
   // Логика одной из cb функции
-  console.log(res); // Законсолить запрос-ответ
+  removePreloader(); // Убрать load bar
+  if (err) {
+    // Если ошибка
+    showAlert(err, "error-msg"); // Вызвать функцию алерта
+    return; // Выйти из функции
+  }
+
+  if (!res.articles.length) {
+    // Если объект запроса пустой
+    // Немного криво, код не работает как надо
+    if (
+      // Если в DOM нету оповещения о пустом списке новостей
+      document.querySelector(".news-container .container").children[0] !==
+      document.querySelector(".empty")
+    ) {
+      const container = document.querySelector(".news-container .container"); // Добавить в DOM объект с оповещением, что список пуст
+      const empty = document.createElement("div");
+      empty.classList.add("empty");
+      empty.textContent = "Новостей не найдено";
+      empty.style = `
+    padding-top: 50px;
+    text-align: center;
+    `;
+      container.insertAdjacentElement("afterbegin", empty);
+    }
+  } else {
+    // Иначе
+    if (document.querySelector(".empty")) {
+      // Если в DOM уже есть этот объект, но актуальный запрос не пустой
+      document.querySelector(".empty").remove(); // Удалить объект
+    }
+  }
   renderNews(res.articles); // Вызов функции с агрументом объект запрошенных новостей
+  console.log(res); // Законсолить запрос-ответ
 }
 
 // Finction render news
 function renderNews(news) {
   // Функция принимающая объект новостей
   const newsContainer = document.querySelector(".news-container .row"); // Инициализация контейнера для контента новостей
+  if (newsContainer.children.length) {
+    // Если в контейнере есть новости
+    clearContainer(newsContainer); // Удалить содержимое
+  }
   let fragment = ""; // Инициализация фрагмента для html блока
 
   news.forEach(newsItem => {
@@ -126,6 +187,17 @@ function renderNews(news) {
   });
 
   newsContainer.insertAdjacentHTML("afterbegin", fragment); // Добавление в контейнер для новостей фрагмента с контентом
+}
+
+// Function clear container
+function clearContainer(container) {
+  // Функция удаление контента контейнера
+  let child = container.lastElementChild; // Запись дочернего элемента контейнера
+  while (child) {
+    // Пока есть дочерние элементы
+    container.removeChild(child); // Удалить дочерний элемент
+    child = container.lastElementChild; // Перезаписать в переменную актуальный дочерний элемент
+  }
 }
 
 // News item template function
@@ -147,4 +219,33 @@ function newsTemplate({ urlToImage, title, url, description }) {
     </div>
   </div>
   `; // Возвращать html структуру с ссылкой на данные элемента этого объекта
+}
+
+function showAlert(msg, type = "success") {
+  // Функция алерт сообщения
+  M.toast({ html: msg, classes: type }); // Волшебное магичество фреймверка materialize
+}
+
+// Show loader function
+function showLoader() {
+  // Функция инициализации load bar
+  document.body.insertAdjacentHTML(
+    // Запись в DOM load bar из materialize (тоже магия)
+    "afterbegin",
+    `
+  <div class="progress">
+    <div class="indeterminate"></div>
+  </div>
+  `
+  );
+}
+
+// Remove loader function
+function removePreloader() {
+  // Функция удаления load bar
+  const loader = document.querySelector(".progress"); // Поиск его в DOM
+  if (loader) {
+    // Если нашли
+    loader.remove(); // Удалили
+  }
 }
