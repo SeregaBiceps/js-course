@@ -87,6 +87,7 @@ document.body.insertAdjacentHTML(
 const button = document.querySelector("button");
 const addForm = document.createElement("form");
 addForm.classList.add("add-form");
+button.classList.add("add");
 function makeInput(inputName, type, plh = "none") {
   const input = document.createElement("input");
   input.type = type;
